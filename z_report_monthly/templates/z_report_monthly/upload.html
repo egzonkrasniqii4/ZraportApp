@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Period Raport Z</title>
+    <style>
+        /* Reset and Base Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, hsl(47, 70%, 91%), #6161617e);
+            color: #333;
+        }
+
+        /* Form Styling */
+        .upload-form {
+            border: none;
+            padding: 30px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+        .upload-form:hover {
+            transform: scale(1.02);
+        }
+
+        /* Header Styling */
+        h2 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* Form Label Styling */
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* Input Styling */
+        input[type="file"],
+        input[type="text"],
+        input[type="number"] {
+            display: block;
+            margin-top: 5px;
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: inset 0 1px 5px rgba(19, 18, 18, 0.226);
+            transition: border-color 0.3s;
+        }
+        input[type="file"]::file-selector-button {
+            padding: 8px 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 9px;
+            background: #313235; /* Matching color */
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background: #252627; /* Darker shade for hover */
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: rgba(19, 18, 18, 0.226);
+            outline: none;
+        }
+
+        /* Button Styling */
+        button {
+            margin-top: 20px;
+            padding: 15px; /* Increased padding for better touch target */
+            font-size: 18px; /* Increased font size */
+            font-weight: bold;
+            color: white;
+            background: #313235; /* Matching color */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            min-width: 200px; /* Set a minimum width */
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background: #252627; /* Darker shade for hover */
+        }
+
+        /* Error Message Styling */
+        .error {
+            color: red;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Success Message Styling */
+        .success {
+            color: green;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top */
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <form class="upload-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>Period Raport Z</h2>
+
+        <label for="receipt">Choose a receipt image:</label>
+        <input type="file" name="receipt" id="receipt" accept="image/*" required>
+
+        <label for="location">Store Location:</label>
+        <input type="text" name="location" id="location" required value="{{ photo_id }}" readonly>
+
+
+        <button type="submit" id="submit-button">Upload</button>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        {% if uploaded_successfully %}
+            <div class="success">Receipt uploaded successfully!</div>
+        {% endif %}
+    </form>
+
+    <!-- Modal -->
+    <div id="loading-modal" class="modal">
+        <div class="modal-content">
+            Duke u ngarkuar...
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('submit-button').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the form from submitting immediately
+            document.getElementById('loading-modal').style.display = 'flex'; // Show the modal
+
+            // Simulate an upload process (you can remove this after connecting to the backend)
+            setTimeout(function() {
+                document.getElementById('loading-modal').style.display = 'none'; // Hide the modal after 3 seconds
+                document.querySelector('.upload-form').submit(); // Submit the form after the "upload"
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Z Report</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            background: linear-gradient(135deg, hsl(47, 70%, 91%), #6161617e);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #414040;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 1px;
+        }
+
+        input[type="date"], input[type="text"], select {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 100%;
+            box-shadow: inset 0 1px 5px rgba(19, 18, 18, 0.1);
+        }
+
+        input[type="submit"], .back-button {
+            background-color: #252627;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"]:hover, .back-button:hover {
+            background-color: #454545;
+        }
+
+        .results {
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-size: 16px;
+            padding: 5px;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .no-records {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        .photo-link {
+            color: #007BFF; /* Bootstrap primary color */
+            text-decoration: none; /* Remove underline */
+        }
+
+        .photo-link:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        .edit-button {
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.568); /* Bootstrap primary color */
+            color: #fff;
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-button:hover {
+            background-color: rgba(0, 0, 0, 0.1); /* Darker shade for hover */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Z Report</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" value="{{ record.Location }}" readonly required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" value="{{ record.Date }}"  required>
+
+            <label for="total_value">Total Value:</label>
+            <input type="text" id="total_value" name="total_value" value="{{ record.TotalValue }}" readonly required>
+
+            <label for="sistemi">Sistemi:</label>
+            <input type="text" id="sistemi" name="sistemi" value="{{ record.Sistemi }}" readonly required>
+
+            <label for="cash">Cash:</label>
+            <input type="text" id="cash" name="cash" value="{{ record.Cash }}" required oninput="updateTotal()">
+
+            <label for="card">Card:</label>
+            <input type="text" id="card" name="card" value="{{ record.Card }}" required oninput="updateTotal()">
+
+            <label for="cupon">Cupon:</label>
+            <input type="text" id="cupon" name="cupon" value="{{ record.Cupon }}" oninput="updateTotal()">
+
+            <label for="difference">Difference:</label>
+            <input type="text" id="difference" name="difference" value="{{ record.Difference }}">
+
+
+            <input type="hidden" name="image_data" value="{{ record.ImageData }}">
+            <input type="hidden" name="location" value="{{ record.Location }}">
+            <!-- <input type="hidden" name="date" value="{{ record.Date }}"> -->
+
+            <input type="submit" value="Update Report">
+            <input type="submit" name="delete" value="Delete Report" onclick="return confirmDelete();">
+
+        </form>
+
+        <!-- Back Button -->
+        <button class="back-button" onclick="window.history.back();">Close</button>
+
+        {% if error_message %}
+            <p style="color: red;">{{ error_message }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function updateTotal() {
+            // Get the values of the inputs
+            const cash = parseFloat(document.getElementById('cash').value) || 0;
+            const card = parseFloat(document.getElementById('card').value) || 0;
+            const cupon = parseFloat(document.getElementById('cupon').value) || 0;
+            const sistemi = parseFloat(document.getElementById('sistemi').value) || 0;
+    
+            // Calculate the total value
+            const totalValue = cash + card + cupon;
+    
+            // Update the total value field
+            document.getElementById('total_value').value = totalValue.toFixed(2);
+    
+            // Calculate the difference
+            const differenceValue = sistemi - totalValue;
+    
+            // Update the difference field
+            document.getElementById('difference').value = differenceValue.toFixed(2);
+        }
+
+        function confirmDelete() { return confirm("Are you sure you want to delete this report?"); }
+    </script>
+</body>
+</html>

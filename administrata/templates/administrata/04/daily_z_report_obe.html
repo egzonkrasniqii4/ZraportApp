@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Z Report</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            background: linear-gradient(135deg, hsl(47, 70%, 91%), #6161617e);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #414040;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 1px;
+        }
+
+        input[type="date"], input[type="text"], select {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 100%;
+            box-shadow: inset 0 1px 5px rgba(19, 18, 18, 0.1);
+        }
+
+        input[type="submit"] {
+            background-color: #252627;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="submit"]:hover {
+            background-color: #454545;
+        }
+
+        .results {
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .corner-button {
+            position: fixed; /* Keeps it in the same corner regardless of scroll */
+            bottom: 10px; /* Adjust distance from the bottom */
+            right: 10px; /* Adjust distance from the right */
+            padding: 5px 10px; /* Smaller size */
+            font-size: 12px; /* Smaller font */
+            background-color: #f0f0f0; /* Neutral color */
+            color: #333; /* Subtle text */
+            border: 1px solid #ccc; /* Light border */
+            border-radius: 5px; /* Rounded corners for softer look */
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+            cursor: pointer;
+            opacity: 0.8; /* Slightly transparent */
+            transition: opacity 0.3s ease; /* Smooth hover effect */
+        }
+        
+        .corner-button:hover {
+            opacity: 1; /* Fully visible on hover */
+            background-color: #e0e0e0; /* Slightly darker on hover */
+        }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-size: 16px;
+            padding: 5px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .no-records {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        .photo-link {
+            color: #007BFF; /* Bootstrap primary color */
+            text-decoration: none; /* Remove underline */
+        }
+
+        .photo-link:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        .edit-button {
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.568); /* Bootstrap primary color */
+            color: #fff;
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-button:hover {
+            background-color: rgba(0, 0, 0, 0.1); /* Darker shade for hover */
+        }
+
+        button[name="export"] {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* No border */
+            padding: 10px 15px; /* Padding for size */
+            font-size: 14px; /* Font size */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+        }
+
+        button[name="export"]:hover {
+            background-color: #45a049; /* Darker green on hover */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        button[name="export"]:active {
+            background-color: #3e8e41; /* Even darker green when clicked */
+            transform: scale(1); /* Reset scale on click */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Daily Z Report</h1>
+        <form method="GET" action="{% url 'daily_z_report_obe' %}">
+            <label for="startDateFilter">Start Date:</label>
+            <input type="date" id="startDateFilter" name="start_date" value="{{ selected_start_date|default:today }}" required>
+        
+            <label for="endDateFilter">End Date:</label>
+            <input type="date" id="endDateFilter" name="end_date" value="{{ selected_end_date|default:today }}" required>
+        
+            <label for="locationFilter">Location:</label>
+            <input type="text" id="locationFilter" name="location" value="{{ selected_location }}" placeholder="Enter location code">
+        
+            <label for="differenceFilter">Difference:</label>
+            <select id="differenceFilter" name="difference">
+                <option value="">All</option>
+                <option value="1" {% if selected_difference == '1' %}selected{% endif %}>Yes</option>
+                <option value="0" {% if selected_difference == '0' %}selected{% endif %}>No</option>
+            </select>
+        
+            <input type="submit" value="Generate Report">
+            <button type="submit" name="export" value="excel">Export to Excel</button>
+            <button type="button" name="run_procedure" class="danger-button corner-button" onclick="runProcedure()">Run Procedure</button>
+
+        </form>
+
+        <div class="results">
+            {% if records %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0, this)">Location</th>
+                            <th onclick="sortTable(1, this)">Store</th>
+                            <th onclick="sortTable(2, this)">Date</th>
+                            <th onclick="sortTable(3, this)">Sistemi</th>
+                            <th onclick="sortTable(4, this)">Total Z</th>
+                            <th onclick="sortTable(5, this)">Cash</th>
+                            <th onclick="sortTable(6, this)">Card</th>
+                            <th onclick="sortTable(7, this)">Cupon</th>
+                            <th onclick="sortTable(9, this)">Other</th>
+                            <th onclick="sortTable(9, this)">Difference</th>
+                            <th onclick="sortTable(10, this)">Photo</th>
+                            <th onclick="sortTable(11, this)">Modified</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                            <tr>
+                                <td>{{ record.Location }}</td>
+                                <td>{{ record.Store}}</td>
+                                <td>{{ record.Date }}</td>
+                                <td>{{ record.Sistemi }}</td>
+                                <td>{{ record.TotalValue }}</td>
+                                <td>{{ record.Cash }}</td>
+                                <td>{{ record.Card }}</td>
+                                <td>{{ record.Cupon }}</td>
+                                <td>{{ record.Other }}</td>
+                                <td>{{ record.Difference }}</td>
+                                <td>
+                                    {% if record.ImageData %}
+                                        <a href="{{ record.ImageData }}" target="_blank" class="photo-link">
+                                            View Image
+                                        </a>
+                                    {% else %}
+                                        No Photo
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ record.EditFlag }}</td>
+                                <td>
+                                    <a 
+                                    class="edit-button" 
+                                    href="{% url 'edit_z_report_obe' %}?image_data={{ record.ImageData|urlencode }}&location={{ record.Location }}&date={{ record.Date }}">
+                                    Edit
+                                </a>
+                              </td>
+                                
+                                
+                                
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-records">No records found for the selected criteria.</p>
+            {% endif %}
+        </div>
+    </div>
+
+
+    
+
+</body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        // Only set the date if the fields are empty
+        const startDateFilter = document.getElementById("startDateFilter");
+        const endDateFilter = document.getElementById("endDateFilter");
+
+        if (!startDateFilter.value) {
+            startDateFilter.value = formatDate(yesterday);
+        }
+
+        if (!endDateFilter.value) {
+            endDateFilter.value = formatDate(yesterday);
+        }
+    });
+
+    function runProcedure() {
+        // Add logic to trigger procedure or show confirmation
+        alert("Procedure executed successfully!");
+    } 
+
+    function sortTable(columnIndex, th) {
+        var table, rows, switching, i, x, y, shouldSwitch, direction, switchCount = 0;
+        table = document.querySelector("table");
+        switching = true;
+        direction = th.getAttribute("data-sort-direction") === "asc" ? "desc" : "asc";  // Toggle direction
+        th.setAttribute("data-sort-direction", direction);  // Update attribute for next click
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[columnIndex];
+                y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+
+                if (direction == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (direction == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchCount++;
+            } else {
+                if (switchCount == 0 && direction == "asc") {
+                    direction = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>
+
+</html>

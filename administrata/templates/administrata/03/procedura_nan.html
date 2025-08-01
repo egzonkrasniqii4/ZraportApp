@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedura NAN</title>
+    <style>
+        /* Reset and Base Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, hsl(47, 70%, 91%), #6161617e);
+            color: #333;
+        }
+        /* Header Styling */
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        /* Form Styling */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        input[type="date"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #555;
+        }
+
+        /* Message Box Styling */
+        .message-box {
+            margin-top: 20px;
+            padding: 10px;
+            width: 80%;
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .message-box.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message-box.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Procedura NAN SHPK</h1>
+
+    <form id="queryForm">
+        {% csrf_token %}
+        <label for="date">Zgjedh Daten:</label>
+        <input type="date" id="date" name="date" required>
+        <button type="submit">RUN</button>
+    </form>
+
+    <!-- Message box to display success or error messages -->
+    <div id="messageBox" class="message-box" style="display: none;"></div>
+
+    <script>
+        // Handle form submission using AJAX
+        document.getElementById('queryForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from reloading the page
+
+            const formData = new FormData(this);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch("{% url 'procedura_nan' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageBox = document.getElementById('messageBox');
+                if (data.message) {
+                    // Success response
+                    messageBox.textContent = data.message;
+                    messageBox.className = 'message-box success';
+                    messageBox.style.display = 'block';
+                } else if (data.error) {
+                    // Error response
+                    messageBox.textContent = data.error;
+                    messageBox.className = 'message-box error';
+                    messageBox.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                const messageBox = document.getElementById('messageBox');
+                messageBox.textContent = "An unexpected error occurred.";
+                messageBox.className = 'message-box error';
+                messageBox.style.display = 'block';
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        /* Reset and Base Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, hsl(47, 70%, 91%), #6161617e);
+            color: #333;
+        }
+
+        /* Container Styling */
+        .home-container {
+            padding: 30px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+        .home-container:hover {
+            transform: scale(1.02);
+        }
+
+        /* Header Styling */
+        h2 {
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* Button Styling */
+        .button-link {
+            display: block;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #313235; /* Matching color */
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            width: 100%;
+            min-width: 200px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .button-link:hover {
+            background: #252627; /* Darker shade for hover */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .home-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <h2>Zgjedh raportin qe do dergoni</h2>
+        <a href="{{ daily_url }}" class="button-link">Daily Z Report</a>
+        <a href="{{ monthly_url }}" class="button-link">Monthly Z Report</a>
+
+    </div>
+</body>
+</html>

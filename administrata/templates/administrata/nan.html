@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NAN</title>
+    <style>
+        /* Reset and Base Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, hsl(47, 70%, 91%), #6161617e);
+            color: #333;
+        }
+        /* Header Styling */
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 70px;
+            font-size: 2rem;
+        }
+        /* Paragraph Styling */
+        p {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            color: #e4e4e4;
+        }
+        /* Button Link Container Styling */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between buttons */
+            width: 100%; /* Ensure full width for buttons */
+            max-width: 400px; /* Limit the maximum width of the button container */
+        }
+        /* Button Link Styling */
+        .button-link {
+            padding: 15px; /* Increased padding for better touch target */
+            font-size: 25px; /* Increased font size */
+            font-weight: bold;
+            color: white;
+            background: #313235; /* Matching color */
+            text-align: center; /* Center the text */
+            border-radius: 10px;
+            text-decoration: none; /* Remove underline */
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: block; /* Make it a block element for full width */
+        }
+        .button-link:hover {
+            background: #252627; /* Darker shade for hover */
+        }
+    </style>
+</head>
+<body>
+   <h1>NAN SHPK</h1>
+    <div class="button-container">
+        <a href="{% url 'daily_z_report_nan' %}" class="button-link">Daily Report Z </a>
+
+
+        <a href="{% url 'monthly_z_report_nan' %}" class="button-link">Period Raport Z</a>
+
+
+        <a href="{% url 'procedura_nan' %}" class="button-link">Procedura</a>
+
+    </div>
+</body>
+</html>

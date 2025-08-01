@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngarko Z raportin</title>
+    <style>
+        /* Reset and Base Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, hsl(47, 70%, 91%), #6161617e);
+            color: #333;
+        }
+
+        /* Form Styling */
+        .upload-form {
+            border: none;
+            padding: 30px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+        .upload-form:hover {
+            transform: scale(1.02);
+        }
+
+        /* Header Styling */
+        h2 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* Form Label Styling */
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+                /* Checkbox Styling */
+            .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        input[type="checkbox"] {
+            margin-left: 10px;
+            transform: scale(1.5);
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Input Styling */
+        input[type="file"],
+        input[type="text"],
+        input[type="date"] {
+            display: block;
+            margin-top: 5px;
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: inset 0 1px 5px rgba(19, 18, 18, 0.226);
+            transition: border-color 0.3s;
+        }
+        input[type="file"]::file-selector-button {
+            padding: 8px 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 9px;
+            background: #313235;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background: #252627;
+        }
+        input[type="text"]:focus,
+        input[type="date"]:focus {
+            border-color: rgba(19, 18, 18, 0.226);
+            outline: none;
+        }
+
+        /* Button Styling */
+        button {
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #313235;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            min-width: 200px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background: #252627;
+        }
+
+        /* Tooltip Styling */
+        .tooltip {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #313235;
+            margin-left: 10px;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            background-color: #313235;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            width: 120px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Loading Overlay Styling */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading-overlay .loading-spinner {
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid #313235; 
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .total-value-container {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <form class="upload-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }} 
+    
+        <label for="receipt">Ngarko Z Raportin:</label>
+        <input type="file" name="receipt" id="receipt" required>
+    
+        <label for="location">Store Location:</label>
+        <input type="text" name="location" id="location" required value="{{ photo_id }}" readonly>
+    
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date" required>
+    
+        <label for="cash">PARA TE GATSHME:
+            <span class="tooltip">ℹ️
+                <span class="tooltip-text">Shkruani vleren e PARA TE GATSHME qe shihni ne Z RAPORT (Shkruani 0 nese nuk keni)</span>
+            </span>
+        </label>
+        <input type="text" name="cash" id="cash" placeholder="Vlera e PARA TE GATSHME" required oninput="validateNumber(this)" pattern="^\d*\.?\d*$">
+    
+        <label for="card">KARTELE:
+            <span class="tooltip">ℹ️
+                <span class="tooltip-text">Shkruani vleren e KARTELE qe shihni ne Z RAPORT (Shkruani 0 nese nuk keni)</span>
+            </span>
+        </label>
+        <input type="text" name="card" id="card" placeholder="Vlera e  KARTELE" required oninput="validateNumber(this)" pattern="^\d*\.?\d*$">
+    
+        <label for="cupon">KUPON (VOUCHER OSE VIRMAN):
+            <span class="tooltip">ℹ️
+                <span class="tooltip-text">Shkruani vleren e KUPON ne Z RAPORT qe gjendet nen KARTELE (NESE E SHIHNI) </span>
+            </span>
+        </label>
+        <input type="text" name="cupon" id="cupon" placeholder="Vlera e KUPON (VOUCHER APO VIRMAN)" oninput="validateNumber(this)" pattern="^\d*\.?\d*$">
+    
+        <label for="total_value">Total Value:
+            <span class="tooltip">ℹ️
+                <span class="tooltip-text">Vlera totale gjenerohet ne menyre automatike</span>
+            </span>
+        </label>
+        <input type="text" name="total_value" id="total_value" placeholder="Vlera totale" required readonly>
+    
+    
+        <!-- <div class="checkbox-label">
+            <label for="differences_found">Diferenca:</label>
+            <input type="checkbox" name="differences_found" id="differences_found">
+            <span class="tooltip">ℹ️
+                <span class="tooltip-text">Klikoni VETEM nese keni dallim ne mes Z raportit dhe Sitemit</span>
+            </span>
+        </div> -->
+        
+        <button type="submit" onclick="showLoading()">Submit</button>
+    </form>
+
+    <script>
+        // Function to show loading overlay
+        function showLoading() {
+            document.getElementById("loadingOverlay").style.display = "flex";
+        }
+
+        // Function to validate the input field to accept only numbers
+        function validateNumber(input) {
+            if (input.value !== "" && !/^\d*\.?\d*$/.test(input.value)) {
+                alert("Please enter a valid number.");
+                input.value = input.value.slice(0, -1);
+            }
+        }
+
+                // Function to validate numeric input (allowing decimals)
+                function validateNumber(input) {
+            // Replace any non-numeric characters except for the decimal point
+            input.value = input.value.replace(/[^0-9.]/g, '');
+
+            // Ensure only one decimal point is allowed
+            if ((input.value.match(/\./g) || []).length > 1) {
+                input.value = input.value.slice(0, -1);
+            }
+
+            calculateTotal();
+        }
+
+        // Function to calculate total value automatically
+        function calculateTotal() {
+            const cash = parseFloat(document.getElementById('cash').value) || 0;
+            const card = parseFloat(document.getElementById('card').value) || 0;
+            const cupon = parseFloat(document.getElementById('cupon').value) || 0;
+
+            const total = cash + card + cupon ;
+            document.getElementById('total_value').value = total.toFixed(2); // Ensure 2 decimal places
+
+        //             // Update the checkbox based on values of profature or ambasada
+        // const differencesFoundCheckbox = document.getElementById('differences_found');
+        // differencesFoundCheckbox.checked = profature > 0 || ambasada > 0;
+        //
+         }
+
+        window.onload = function() {
+    const dateInput = document.getElementById("date");
+    const today = new Date();
+    const formattedDate = today.toISOString().split("T")[0];
+    dateInput.value = formattedDate;
+};
+
+    </script>
+</body>
+</html>
