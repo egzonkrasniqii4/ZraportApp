@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.conf import settings
 
 # Define the static folder path for saving images
-SAVE_PATH = r'\\192.168.49.3\FashionApps\static\SCANAPP'
+SAVE_PATH = r''
 
 def upload_and_extract_text(request, store_location=None, photo_id=None):
     # Ensure store_location is properly formatted as two digits if provided
@@ -81,10 +81,10 @@ def save_to_database(store_location, photo_id, uploaded_file, relative_image_pat
     # Database connection parameters
     conn_str = (
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=192.168.49.49;'
-        'DATABASE=ZRaportsApp;'
-        'UID=sa;'
-        'PWD=sasa'
+        'SERVER=;'
+        'DATABASE=;'
+        'UID=;'
+        'PWD='
     )
     
     # Connect to SQL Server
