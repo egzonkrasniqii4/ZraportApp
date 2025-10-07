@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-z=qkx#!3a&_1sk_t1gmsgh#5xt_cbveiq%%i*!50ckuux=c2u2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.49.49', 'localhost', '127.0.0.1','www.egzonkrasniqiapp.com']  # for development purposes
+ALLOWED_HOSTS = ['', 'localhost', '','']  # for development purposes
 
 
 
@@ -130,7 +130,7 @@ STATIC_URL = '/static/'
 # Directories for static files, including the network path
 STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Local static files directory
-    r'\\192.168.49.3\FashionApps\static\SCANAPP',  # Network path to shared folder
+    r'',  # Network path to shared folder
 ]
 
 # Optional: You may also want to configure Django to collect static files for deployment
