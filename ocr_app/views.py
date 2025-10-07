@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.conf import settings
 
 # Update SAVE_PATH to point to the static folder
-SAVE_PATH = r'\\192.168.49.3\FashionApps\static\SCANAPP'
+SAVE_PATH = r''
 
 def upload_and_save_data(request, store_location=None, photo_id=None):
     store_location = str(store_location).zfill(2) if store_location else None
@@ -71,10 +71,10 @@ def save_to_database(store_location, location, date, total_value, cash, card, cu
     # Database connection parameters
     conn_str = (
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=192.168.49.49;'
-        'DATABASE=ZRaportsApp;'
-        'UID=sa;'
-        'PWD=sasa'
+        'SERVER=;'
+        'DATABASE=;'
+        'UID=;'
+        'PWD='
     )
 
     # Connect to SQL Server
